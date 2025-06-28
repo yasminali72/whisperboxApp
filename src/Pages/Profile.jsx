@@ -22,7 +22,7 @@ import { NumberMessageContext } from "../Context/NumberMessageContext";
 
 export default function Profile() {
   const { userToken, setUserToken } = useContext(AuthContext);
-  const { numberMessage, setNumberMessage } = useContext(NumberMessageContext);
+  const { setNumberMessage } = useContext(NumberMessageContext);
   const [refreshMessages, setRefreshMessages] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
