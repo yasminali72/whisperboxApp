@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../Context/AuthContext";
-import { LoaderCircle } from "lucide-react";
+import { Loader, Loader2, LoaderCircle } from "lucide-react";
 import Message from "../Components/Message/Message";
 import { Bounce, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -18,9 +18,12 @@ import {
   Share2,
 } from "lucide-react";
 import { API_BASE_URL } from "../utils/config";
+import { NumberMessageContext } from "../Context/NumberMessageContext";
 
 export default function Profile() {
   const { userToken, setUserToken } = useContext(AuthContext);
+  const { numberMessage, setNumberMessage } = useContext(NumberMessageContext);
+  const [refreshMessages, setRefreshMessages] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -32,7 +35,7 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     getUser();
-  }, [numOfAllMessages, numOfPinMessages]);
+  }, [numOfAllMessages, numOfPinMessages, refreshMessages]);
 
   async function getUser() {
     await axios
@@ -46,6 +49,8 @@ export default function Profile() {
         setMessages(data.data.messages);
         setNumOfAllMessages(data.data.numberOfAllMessages);
         setNumOfPinMessages(data.data.numberOfPinMessage);
+        setNumberMessage(data.data.numberOfAllMessages);
+        setRefreshMessages(false);
       })
       .catch(({ response }) => {
         console.log(response);
@@ -154,19 +159,27 @@ export default function Profile() {
               : "No messages"}
           </h1>
           {numOfAllMessages > 0 && (
-            <button
-              type="reset"
-              className={`flex items-center px-3 py-2 text-white font-medium rounded-lg transition-all gap-2 ${
-                isLoading || numOfAllMessages === 0
-                  ? "bg-red-300 opacity-50"
-                  : "bg-red-500 hover:bg-red-600 shadow-md"
-              }`}
-              onClick={deleteAllMessages}
-              disabled={isLoading || numOfAllMessages === 0}
-            >
-              <Trash2 className="w-5 h-5" /> Delete All{" "}
-              {isLoading && <LoaderCircle className="animate-spin ml-2" />}
-            </button>
+            <>
+              <div className="flex justify-between items-center gap-2">
+                <button onClick={() => setRefreshMessages(true)}>
+                  <Loader className={`${refreshMessages?"  animate-spin":""} cursor-pointer` }/>
+                </button>
+
+                <button
+                  type="reset"
+                  className={`flex items-center px-3 py-2 text-white font-medium rounded-lg transition-all gap-2 cursor-pointer ${
+                    isLoading || numOfAllMessages === 0
+                      ? "bg-red-300 opacity-50"
+                      : "bg-red-500 hover:bg-red-600 shadow-md"
+                  }`}
+                  onClick={deleteAllMessages}
+                  disabled={isLoading || numOfAllMessages === 0}
+                >
+                  <Trash2 className="w-5 h-5" /> Delete All{" "}
+                  {isLoading && <LoaderCircle className="animate-spin ml-2" />}
+                </button>
+              </div>
+            </>
           )}
         </div>
 

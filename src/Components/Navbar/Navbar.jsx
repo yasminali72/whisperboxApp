@@ -1,22 +1,40 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
 import { Moon, Sun, User2 } from "lucide-react";
 import { ModeContext } from "../../Context/ModeContext";
 import { API_BASE_URL } from "../../utils/config";
 import axios from "axios";
+import { NumberMessageContext } from "../../Context/NumberMessageContext";
 
 export default function Navbar() {
   const { userToken, setUserToken } = useContext(AuthContext);
+  const { numberMessage, setNumberMessage } = useContext(NumberMessageContext);
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const menuRef = useRef(null);
+
   const navigate = useNavigate();
   const { darkMode, setDarkMode } = useContext(ModeContext);
+
   const [user, setUser] = useState();
+
   useEffect(() => {
     getUser();
-  }, [userToken]);
+  }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   async function getUser() {
     await axios
       .get(`${API_BASE_URL}/user/profile`, {
@@ -26,7 +44,7 @@ export default function Navbar() {
       })
       .then(({ data }) => {
         setUser(data.data.user);
-        console.log(data.data.user);
+        setNumberMessage(data.data.numberOfAllMessages);
       })
       .catch(({ response }) => {
         console.log(response);
@@ -80,6 +98,8 @@ export default function Navbar() {
                 {/* زر الإشعارات */}
                 <button className="relative rounded-full bg-gray-800 p-1 text-gray-400 dark:text-gray-300 hover:text-white">
                   <span className="sr-only">View notifications</span>
+
+                  {/* Notification Icon */}
                   <svg
                     className="size-6"
                     viewBox="0 0 24 24"
@@ -93,6 +113,13 @@ export default function Navbar() {
                       d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
                     />
                   </svg>
+
+                  {/* Notification Count Badge */}
+                  {numberMessage > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white shadow">
+                      {numberMessage > 99 ? "+99" : numberMessage}
+                    </span>
+                  )}
                 </button>
 
                 <div className="relative ml-3">
@@ -110,7 +137,10 @@ export default function Navbar() {
                   </button>
 
                   {showMenu && (
-                    <div className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white dark:bg-gray-800 py-1 ring-1 shadow-lg ring-black/5">
+                    <div
+                      ref={menuRef}
+                      className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white dark:bg-gray-800 py-1 ring-1 shadow-lg ring-black/5"
+                    >
                       <Link
                         to={"/profile"}
                         onClick={() => setShowMenu(false)}
