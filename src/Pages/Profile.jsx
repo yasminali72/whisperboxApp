@@ -158,13 +158,18 @@ export default function Profile() {
               ? `Messages (${numOfAllMessages})`
               : "No messages"}
           </h1>
-          {numOfAllMessages > 0 && (
-            <>
-              <div className="flex justify-between items-center gap-2">
-                <button onClick={() => setRefreshMessages(true)}>
-                  <Loader className={`${refreshMessages?"  animate-spin":""} cursor-pointer` }/>
-                </button>
 
+          <>
+            <div className="flex justify-between items-center gap-2">
+              <button onClick={() => setRefreshMessages(true)}>
+                <Loader
+                  className={`${
+                    refreshMessages ? "  animate-spin" : ""
+                  } cursor-pointer`}
+                />
+              </button>
+
+              {numOfAllMessages > 0 && (
                 <button
                   type="reset"
                   className={`flex items-center px-3 py-2 text-white font-medium rounded-lg transition-all gap-2 cursor-pointer ${
@@ -178,9 +183,9 @@ export default function Profile() {
                   <Trash2 className="w-5 h-5" /> Delete All{" "}
                   {isLoading && <LoaderCircle className="animate-spin ml-2" />}
                 </button>
-              </div>
-            </>
-          )}
+              )}
+            </div>
+          </>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">

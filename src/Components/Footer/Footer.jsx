@@ -20,8 +20,20 @@ export default function Footer() {
 )}
 
 <footer className="text-center text-gray-400 bg-gray-900 py-4 text-sm dark:bg-gray-950">
-  © 2025 MyAnonymous - All rights reserved.
+  <p>
+    © 2025 <span className="font-semibold text-white">WhisperBox</span> by{" "}
+    <a
+      href="https://github.com/yasminali72/whisperboxApp"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-400 hover:text-blue-500 transition-colors"
+    >
+      Yasmin Ali
+    </a>{" "}
+    – All rights reserved.
+  </p>
 </footer>
+
 
  </>
   )
