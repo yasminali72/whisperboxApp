@@ -6,7 +6,6 @@ import Register from "../Pages/Register";
 import NotFound from "../Pages/NotFound";
 import ProdectAuthRoute from "../Components/ProdectAuthRoute/ProdectAuthRoute";
 import ProdectedRoute from "../Components/ProdectedRoute/ProdectedRoute";
-import ConfirmEmail from "../Pages/VerifyCode.jsx";
 import Profile from "../Pages/Profile";
 import Settings from "../Pages/Settings";
 import SendMessage from "../Pages/SendMessage";
@@ -42,7 +41,6 @@ const router = createBrowserRouter([
           </ProdectedRoute>
         ),
       },
-      ,
       {
         path: "settings/:felidName/:value",
         element: (
@@ -92,7 +90,7 @@ const router = createBrowserRouter([
             <Register />
           </ProdectAuthRoute>
         ),
-      }, 
+      },
       {
         path: "verify-code/:type",
         element: (
@@ -117,8 +115,8 @@ const router = createBrowserRouter([
           </ProdectAuthRoute>
         ),
       },
-      
-    ],errorElement:<Error/>
+    ],
+    errorElement: <Error />,
   },
   { path: "*", element: <NotFound /> },
 ]);
