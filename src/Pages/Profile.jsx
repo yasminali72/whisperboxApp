@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../Context/AuthContext";
-import { Loader, Loader2, LoaderCircle } from "lucide-react";
+import { Loader, Loader2, LoaderCircle, UserIcon } from "lucide-react";
 import Message from "../Components/Message/Message";
 import { Bounce, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -55,7 +55,7 @@ export default function Profile() {
       .catch(({ response }) => {
         console.log(response);
         if (
-          response.data?.msg == "TokenExpiredError: jwt expired" ||
+          response?.data?.msg == "TokenExpiredError: jwt expired" ||
           "In-valid credentials"
         ) {
           setUserToken("");
@@ -94,17 +94,24 @@ export default function Profile() {
   return (
     <>
       <Helmet>
-        <title className="capitalize">{user.userName}</title>
+        <title className=" capitalize">{user.userName}</title>
       </Helmet>
-      <div className="max-w-md mx-auto p-6 bg-gray-50 dark:bg-gray-800 shadow-lg rounded-xl mt-10 text-gray-900 dark:text-gray-100">
+      <div className="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl mt-10 text-gray-900 dark:text-gray-100">
         <div className="flex items-center space-x-6">
-          <img
-            src={user.image?.secure_url || "https://via.placeholder.com/100"}
-            alt="Profile"
-            className="w-24 h-24 rounded-full border-4 border-indigo-500 shadow-md"
-          />
+          {user.image?.secure_url ? (
+            <img
+              src={user.image?.secure_url}
+              alt="Profile"
+              className="w-24 h-24 rounded-full border-4 border-indigo-500 shadow-md"
+            />
+          ) : (
+            <div className="flex items-center justify-center w-24 h-24 rounded-full bg-gray-100">
+              <UserIcon className="w-12 h-12 text-gray-500" />
+            </div>
+          )}
+
           <div>
-            <h2 className="text-lg font-semibold flex items-center gap-2">
+            <h2 className="text-lg font-semibold flex items-center gap-2 capitalize">
               <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />{" "}
               {user.userName}
             </h2>
@@ -116,10 +123,18 @@ export default function Profile() {
               <Phone className="w-5 h-5 text-gray-600 dark:text-gray-400" />{" "}
               {user.phone}
             </p>
-            <p className="flex items-center gap-2">⚧ {user.gender}</p>
+            <p className="flex items-center gap-2 capitalize">
+              ⚧ {user.gender}
+            </p>
             <p className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />{" "}
-              {new Date(user.DOB).toLocaleDateString()}
+              {user?.BOD
+                ? new Date(user.BOD).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Not Available"}
             </p>
           </div>
         </div>
@@ -127,7 +142,14 @@ export default function Profile() {
         <div className="mt-4 bg-gray-100 dark:bg-gray-700 p-3 rounded-lg shadow-sm text-center">
           <p className="font-medium flex items-center justify-center gap-2">
             <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />{" "}
-            Joined: {new Date(user.createdAt).toLocaleDateString()}
+            Joined:{" "}
+            {user?.createdAt
+              ? new Date(user.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Not Available"}
           </p>
         </div>
 
@@ -153,7 +175,7 @@ export default function Profile() {
 
       <div className="mt-10 p-4 bg-gray-50 dark:bg-gray-800 shadow-md rounded-lg">
         <div className="flex justify-between items-center">
-          <h1 className="text-lg font-semibold">
+          <h1 className="text-xl font-semibold text-gray-800 dark:text-white mt-8 mb-4">
             {numOfAllMessages > 0
               ? `Messages (${numOfAllMessages})`
               : "No messages"}
